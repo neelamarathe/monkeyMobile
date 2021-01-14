@@ -13,7 +13,7 @@ var fruits,fruit1,fruit2;
 var fruitG, obstacleG;
 
 var over, overI;
-
+var res,resimg;
 var score;
 
 var gameState = "play";
@@ -39,7 +39,7 @@ function preload(){
   overI = loadImage("gameover[1].png");
   
   funnyB = loadSound("funny.mp3");
-
+resimg = loadImage("restart.png");
 }
 
 function setup() {
@@ -62,12 +62,15 @@ function setup() {
   
   invisible2 = createSprite(250,10,500,1);
   invisible2.visible = false;
-  
-  
+  res = createSprite(300,200,10,10);
+  res.addImage(resimg);
+  res.scale = 0.7;
   // score variables and groups
   obstacleGroup = new Group();
   fruitG = new Group();
-  
+   over = createSprite(250,140,10,10);
+       over.addImage(overI);
+       over.scale = 1;
   score = 0;
   funnyB.loop();
   
@@ -76,6 +79,8 @@ function draw() {
   background("lightblue");
    
   if(gameState === "play"){
+    res.visible = false;
+    over.visible = false
     if(frameCount % 5 === 0){
        score += 5;
     }
@@ -112,6 +117,8 @@ function draw() {
   }
   
  else if(gameState === end){
+   res.visible = true;
+   over.visible = true;
        back.velocityX = 0;
        monkey.velocityY = 0;
    monkey.visible=false;
@@ -120,13 +127,11 @@ function draw() {
        funnyB.stop();
        obstacleGroup.setVelocityXEach(0);
        fruitG.setVelocityXEach(0);
-       over = createSprite(250,140,10,10);
-       over.addImage(overI);
-       over.scale = 1;
-  }
-  
-   
-  
+      
+   if(mousePressedOver(res)){
+     reset();
+   }
+  }  
  drawSprites();
 
   stroke("black");
@@ -135,6 +140,17 @@ function draw() {
   fill("aqua");
   text("score:"+ score, 380,50);
   text("fruits:" + fruitS,300,50)
+}
+function reset(){
+ // console.log("hi")
+  gameState = "play";
+  funnyB.play();
+  score = 0;
+  fruitS = 0;
+       back.velocityX = -6;
+  over.visible = false;
+  monkey.visible = true;
+  res.visible = false;
 }
 function spawnFruit(){
   if(frameCount % 100 === 0){
